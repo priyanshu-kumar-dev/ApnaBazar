@@ -1,0 +1,144 @@
+.ambulance-page{
+    background:#f5f7fa;
+    min-height:100vh;
+    padding:30px;
+}
+
+.ambulance-banner{
+    background:linear-gradient(135deg,#d32f2f,#f44336);
+    color:white;
+    padding:50px;
+    border-radius:18px;
+    text-align:center;
+}
+
+.ambulance-banner h1{
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.ambulance-banner p{
+    font-size:18px;
+    margin-bottom:25px;
+}
+
+.call-btn{
+    background:white;
+    color:#d32f2f;
+    border:none;
+    padding:14px 28px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+}
+
+.location-box{
+    margin:30px 0;
+    background:white;
+    padding:15px 20px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.location-box input{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:16px;
+}
+
+.section-title{
+    margin-bottom:20px;
+    color:#222;
+}
+
+.ambulance-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+}
+
+.ambulance-card{
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.ambulance-card:hover{
+    transform:translateY(-8px);
+}
+
+.ambulance-icon{
+    width:80px;
+    height:80px;
+    margin:auto;
+    border-radius:50%;
+    background:#ffebee;
+    color:#d32f2f;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:34px;
+    margin-bottom:18px;
+}
+
+.ambulance-card p{
+    margin:10px 0;
+    color:#555;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+}
+
+.ambulance-card h4{
+    color:#2e7d32;
+    margin-bottom:20px;
+}
+
+.ambulance-card button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:#d32f2f;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+}
+
+.ambulance-card button:hover{
+    background:#b71c1c;
+}
+
+@media(max-width:768px){
+
+    .ambulance-page{
+        padding:20px;
+    }
+
+    .ambulance-banner{
+        padding:30px;
+    }
+
+    .ambulance-banner h1{
+        font-size:30px;
+    }
+
+    .call-btn{
+        width:100%;
+        justify-content:center;
+    }
+
+}

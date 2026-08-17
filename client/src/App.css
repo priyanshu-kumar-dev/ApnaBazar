@@ -1,0 +1,133 @@
+/* ==========================
+   GLOBAL RESET
+========================== */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ==========================
+   BODY
+========================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", "Poppins", sans-serif;
+  background: #f1f3f6;
+  color: #212121;
+  overflow-x: hidden;
+}
+
+/* ==========================
+   ROOT
+========================== */
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================
+   APP LAYOUT
+========================== */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Main Content */
+
+main {
+  flex: 1;
+  width: 100%;
+}
+
+/* ==========================
+   IMAGES
+========================== */
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ==========================
+   LINKS
+========================== */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ==========================
+   INPUTS
+========================== */
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  outline: none;
+}
+
+/* ==========================
+   SCROLLBAR
+========================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f3f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2874f0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0b57d0;
+}
+
+/* ==========================
+   SELECTION
+========================== */
+
+::selection {
+  background: #2874f0;
+  color: white;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+}

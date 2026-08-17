@@ -1,0 +1,34 @@
+.notification-page{
+  padding:40px;
+  background:#f5f5f5;
+  min-height:100vh;
+}
+
+
+.notification-page h2{
+  margin-bottom:20px;
+}
+
+
+.notification-box{
+  background:white;
+  padding:20px;
+  margin-bottom:15px;
+  border-radius:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+
+.notification-box p{
+  color:#777;
+  margin-top:5px;
+}
+
+
+input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  cursor:pointer;
+}

@@ -1,0 +1,942 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, sans-serif;
+}
+
+body {
+  background: #f1f3f6;
+}
+
+.address-page {
+  min-height: 100vh;
+  background: #f1f3f6;
+
+  display: flex;
+  justify-content: center;
+
+  padding: 40px 15px;
+}
+
+.address-card {
+  width: 860px;
+
+  background: #fff;
+
+  padding: 30px;
+
+  border-radius: 3px;
+
+  box-shadow:
+    0 1px 4px
+    rgba(0, 0, 0, 0.15);
+}
+
+/* =====================================================
+   LOCATION SEARCH
+===================================================== */
+
+.location-search-section {
+  position: relative;
+
+  margin-bottom: 15px;
+}
+
+.location-search {
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+
+  background: #fff;
+
+  border: 1px solid #d5d5d5;
+
+  border-radius: 4px;
+
+  padding-left: 15px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 1px 4px
+    rgba(0, 0, 0, 0.12);
+}
+
+.location-search > svg {
+  flex-shrink: 0;
+
+  font-size: 21px;
+
+  color: #555;
+}
+
+.location-search input {
+  flex: 1;
+
+  width: auto;
+
+  border: none;
+
+  outline: none;
+
+  padding: 0 12px;
+
+  font-size: 15px;
+
+  height: 100%;
+
+  color: #212121;
+}
+
+.location-search input::placeholder {
+  color: #777;
+}
+
+.location-search button {
+  height: 100%;
+
+  min-width: 100px;
+
+  border: none;
+
+  background: #2874f0;
+
+  color: #fff;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.location-search button:hover {
+  background: #1565d8;
+}
+
+.location-search button:disabled {
+  background: #9bbcf4;
+
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   SEARCH RESULTS
+===================================================== */
+
+.search-results {
+  position: absolute;
+
+  top: 59px;
+
+  left: 0;
+
+  right: 0;
+
+  z-index: 2000;
+
+  background: #fff;
+
+  border: 1px solid #ddd;
+
+  border-radius: 4px;
+
+  box-shadow:
+    0 4px 14px
+    rgba(0, 0, 0, 0.18);
+
+  max-height: 280px;
+
+  overflow-y: auto;
+}
+
+.search-result {
+  width: 100%;
+
+  border: none;
+
+  background: #fff;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  text-align: left;
+
+  padding: 14px 15px;
+
+  cursor: pointer;
+
+  color: #212121;
+
+  border-bottom: 1px solid #eee;
+}
+
+.search-result:last-child {
+  border-bottom: none;
+}
+
+.search-result:hover {
+  background: #f5f8ff;
+}
+
+.search-result svg {
+  flex-shrink: 0;
+
+  color: #2874f0;
+
+  font-size: 19px;
+
+  margin-top: 2px;
+}
+
+.search-result span {
+  font-size: 14px;
+
+  line-height: 1.4;
+}
+
+/* =====================================================
+   LOCATION ACTIONS
+===================================================== */
+
+.location-actions {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+}
+
+.location-map-button {
+  width: 100%;
+
+  height: 52px;
+
+  border: none;
+
+  background: #fff;
+
+  color: #2874f0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0 16px;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  border-radius: 4px;
+
+  box-shadow:
+    0 1px 4px
+    rgba(0, 0, 0, 0.18);
+
+  text-align: left;
+}
+
+.location-map-button svg {
+  font-size: 23px;
+}
+
+.location-map-button:hover {
+  background: #f5f8ff;
+}
+
+/* =====================================================
+   CURRENT LOCATION BUTTON
+===================================================== */
+
+.location-btn {
+  width: 100%;
+
+  background: #2874f0;
+
+  color: #fff;
+
+  border: none;
+
+  padding: 14px 24px;
+
+  border-radius: 3px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  font-size: 15px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 3px 8px
+    rgba(0, 0, 0, 0.2);
+}
+
+.location-btn:hover {
+  background: #1565d8;
+}
+
+.location-btn:disabled {
+  background: #8fb4ef;
+
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   SAVED LOCATION
+===================================================== */
+
+.saved-location-box {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 15px;
+
+  margin-bottom: 20px;
+
+  background: #f5fff7;
+
+  border: 1px solid #b8e5c2;
+
+  border-radius: 4px;
+}
+
+.saved-location-left {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  min-width: 0;
+}
+
+.saved-icon {
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #2e7d32;
+
+  color: #fff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.saved-location-left strong {
+  display: block;
+
+  font-size: 14px;
+
+  color: #2e7d32;
+
+  margin-bottom: 4px;
+}
+
+.saved-location-left p {
+  font-size: 13px;
+
+  line-height: 1.4;
+
+  color: #555;
+}
+
+.saved-location-box > button {
+  border: none;
+
+  background: none;
+
+  color: #2874f0;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.row {
+  display: flex;
+
+  gap: 15px;
+
+  margin-bottom: 15px;
+}
+
+.row input,
+.row select {
+  width: 50%;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+
+  border: 1px solid #d5d5d5;
+
+  padding: 15px;
+
+  font-size: 15px;
+
+  outline: none;
+
+  border-radius: 2px;
+
+  color: #212121;
+
+  background: #fff;
+}
+
+textarea {
+  resize: none;
+
+  margin-bottom: 15px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #2874f0;
+}
+
+/* =====================================================
+   ADDRESS TYPE
+===================================================== */
+
+.type-title {
+  margin-top: 10px;
+
+  margin-bottom: 12px;
+
+  color: #878787;
+
+  font-size: 14px;
+}
+
+.address-type {
+  display: flex;
+
+  gap: 40px;
+
+  margin-bottom: 28px;
+}
+
+.address-type label {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  cursor: pointer;
+
+  font-size: 16px;
+}
+
+.address-type input {
+  width: 20px;
+
+  height: 20px;
+
+  padding: 0;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 30px;
+}
+
+.save-btn {
+  width: 290px;
+
+  height: 52px;
+
+  background: #2874f0;
+
+  color: #fff;
+
+  border: none;
+
+  font-size: 17px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background: #1565d8;
+}
+
+.cancel-btn {
+  background: none;
+
+  border: none;
+
+  color: #2874f0;
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  font-weight: 500;
+}
+
+.cancel-btn:hover {
+  text-decoration: underline;
+}
+
+/* =====================================================
+   MAP OVERLAY
+===================================================== */
+
+.map-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  background:
+    rgba(0, 0, 0, 0.55);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+}
+
+/* =====================================================
+   MAP MODAL
+===================================================== */
+
+.map-modal {
+  width: min(1000px, 100%);
+
+  height: min(720px, 92vh);
+
+  background: #fff;
+
+  border-radius: 8px;
+
+  overflow: hidden;
+
+  display: flex;
+
+  flex-direction: column;
+
+  box-shadow:
+    0 12px 45px
+    rgba(0, 0, 0, 0.35);
+}
+
+/* =====================================================
+   MAP HEADER
+===================================================== */
+
+.map-header {
+  min-height: 72px;
+
+  padding: 13px 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border-bottom: 1px solid #eee;
+
+  background: #fff;
+}
+
+.map-header h3 {
+  font-size: 18px;
+
+  color: #212121;
+}
+
+.map-header p {
+  margin-top: 4px;
+
+  font-size: 13px;
+
+  color: #878787;
+}
+
+.map-close {
+  width: 38px;
+
+  height: 38px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #f1f3f6;
+
+  color: #555;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.map-close:hover {
+  background: #e5e7eb;
+}
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.map-container {
+  position: relative;
+
+  flex: 1;
+
+  min-height: 350px;
+}
+
+.location-map {
+  width: 100%;
+
+  height: 100%;
+}
+
+.leaflet-container {
+  width: 100%;
+
+  height: 100%;
+
+  font-family: Inter, sans-serif;
+}
+
+/* =====================================================
+   MAP CURRENT LOCATION
+===================================================== */
+
+.map-current-location {
+  position: absolute;
+
+  right: 20px;
+
+  bottom: 20px;
+
+  z-index: 1000;
+
+  border: none;
+
+  background: #fff;
+
+  color: #2874f0;
+
+  padding: 13px 18px;
+
+  border-radius: 25px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 3px 12px
+    rgba(0, 0, 0, 0.25);
+}
+
+.map-current-location:hover {
+  background: #f5f8ff;
+}
+
+/* =====================================================
+   MAP LOADING
+===================================================== */
+
+.map-loading {
+  height: 100%;
+
+  background: #f1f3f6;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #2874f0;
+}
+
+.map-loading svg {
+  font-size: 45px;
+
+  margin-bottom: 10px;
+}
+
+.map-loading p {
+  font-size: 14px;
+
+  color: #555;
+}
+
+/* =====================================================
+   MAP SELECTED ADDRESS
+===================================================== */
+
+.map-selected-address {
+  display: flex;
+
+  gap: 12px;
+
+  padding: 13px 18px;
+
+  border-top: 1px solid #eee;
+
+  background: #fff;
+}
+
+.map-selected-address > svg {
+  flex-shrink: 0;
+
+  font-size: 25px;
+
+  color: #2874f0;
+
+  margin-top: 2px;
+}
+
+.map-selected-address strong {
+  display: block;
+
+  font-size: 15px;
+
+  color: #212121;
+}
+
+.map-selected-address p {
+  margin-top: 4px;
+
+  font-size: 13px;
+
+  color: #666;
+
+  line-height: 1.4;
+}
+
+.map-selected-address span {
+  display: block;
+
+  margin-top: 5px;
+
+  font-size: 13px;
+
+  color: #2874f0;
+
+  font-weight: 500;
+}
+
+/* =====================================================
+   MAP FOOTER
+===================================================== */
+
+.map-footer {
+  padding: 12px 18px;
+
+  border-top: 1px solid #eee;
+
+  background: #fff;
+}
+
+.map-save-btn {
+  width: 100%;
+
+  height: 50px;
+
+  border: none;
+
+  border-radius: 3px;
+
+  background: #2874f0;
+
+  color: #fff;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+}
+
+.map-save-btn:hover {
+  background: #1565d8;
+}
+
+.map-save-btn:disabled {
+  background: #bdbdbd;
+
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .address-page {
+    padding: 15px 10px;
+  }
+
+  .address-card {
+    width: 100%;
+
+    padding: 20px;
+  }
+
+  .row {
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+  .row input,
+  .row select {
+    width: 100%;
+  }
+
+  .buttons {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 15px;
+  }
+
+  .save-btn {
+    width: 100%;
+  }
+
+  .cancel-btn {
+    text-align: center;
+  }
+
+  .location-search {
+    height: 50px;
+  }
+
+  .location-search button {
+    min-width: 80px;
+  }
+
+  .saved-location-box {
+    align-items: flex-start;
+  }
+
+  .map-overlay {
+    padding: 0;
+  }
+
+  .map-modal {
+    width: 100%;
+
+    height: 100vh;
+
+    max-height: none;
+
+    border-radius: 0;
+  }
+
+  .map-header {
+    min-height: 68px;
+
+    padding: 12px 15px;
+  }
+
+  .map-container {
+    min-height: 0;
+  }
+
+  .map-current-location {
+    right: 15px;
+
+    bottom: 15px;
+
+    padding: 12px 15px;
+  }
+
+  .map-selected-address {
+    padding: 12px 15px;
+  }
+
+  .map-footer {
+    padding: 12px 15px;
+  }
+}
