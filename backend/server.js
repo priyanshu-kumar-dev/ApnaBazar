@@ -1,12 +1,11 @@
+
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 
 const connectDB = require("./config/db");
-
-dotenv.config();
 
 const app = express();
 
@@ -17,15 +16,37 @@ const app = express();
 connectDB();
 
 // =====================================================
-// MIDDLEWARE
+// CORS
 // =====================================================
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://apnabazar-1.onrender.com",
+];
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow requests without an origin
+      // (Postman, server-to-server, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+
     credentials: true,
-  }),
+  })
 );
+
+// =====================================================
+// MIDDLEWARE
+// =====================================================
 
 app.use(express.json());
 
@@ -38,8 +59,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message:
-      "ApnaBazarKart server is running",
+    message: "ApnaBazarKart server is running",
   });
 });
 
@@ -49,46 +69,31 @@ app.get("/", (req, res) => {
 
 const authRoutes = require("./routes/auth");
 
-app.use(
-  "/api/auth",
-  authRoutes,
-);
+app.use("/api/auth", authRoutes);
 
 // =====================================================
 // BOOKING
 // =====================================================
 
-const bookingRoutes =
-  require("./routes/bookingRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 
-app.use(
-  "/api/bookings",
-  bookingRoutes,
-);
+app.use("/api/bookings", bookingRoutes);
 
 // =====================================================
 // ADDRESS
 // =====================================================
 
-const addressRoutes =
-  require("./routes/addressRoutes");
+const addressRoutes = require("./routes/addressRoutes");
 
-app.use(
-  "/api/addresses",
-  addressRoutes,
-);
+app.use("/api/addresses", addressRoutes);
 
 // =====================================================
 // RAZORPAY PAYMENT
 // =====================================================
 
-const paymentRoutes =
-  require("./routes/paymentRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
-app.use(
-  "/api/payments",
-  paymentRoutes,
-);
+app.use("/api/payments", paymentRoutes);
 
 // =====================================================
 // 404
@@ -97,9 +102,7 @@ app.use(
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-
-    message:
-      `Route not found: ${req.method} ${req.originalUrl}`,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
   });
 });
 
@@ -107,60 +110,35 @@ app.use((req, res) => {
 // ERROR HANDLER
 // =====================================================
 
-app.use(
-  (err, req, res, next) => {
-    console.error(
-      "SERVER ERROR:",
-      err,
-    );
+app.use((err, req, res, next) => {
+  console.error("SERVER ERROR:", err);
 
-    res.status(500).json({
-      success: false,
-
-      message:
-        "Internal server error",
-
-      error:
-        err.message,
-    });
-  },
-);
+  res.status(500).json({
+    success: false,
+    message: "Internal server error",
+    error: err.message,
+  });
+});
 
 // =====================================================
 // SERVER
 // =====================================================
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-app.listen(
-  PORT,
-  () => {
-    console.log(
-      "========================================",
-    );
+app.listen(PORT, () => {
+  console.log("========================================");
 
-    console.log(
-      `Server running on http://localhost:${PORT}`,
-    );
+  console.log(`Server running on port ${PORT}`);
 
-    console.log(
-      "Auth API     : /api/auth",
-    );
+  console.log("Auth API     : /api/auth");
 
-    console.log(
-      "Booking API  : /api/bookings",
-    );
+  console.log("Booking API  : /api/bookings");
 
-    console.log(
-      "Address API  : /api/addresses",
-    );
+  console.log("Address API  : /api/addresses");
 
-    console.log(
-      "Payment API  : /api/payments",
-    );
+  console.log("Payment API  : /api/payments");
 
-    console.log(
-      "========================================",
-    );
-  },
-);
+  console.log("========================================");
+});
+
