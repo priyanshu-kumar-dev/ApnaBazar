@@ -154,10 +154,7 @@ const MapController = ({ position }) => {
 const MapClickHandler = ({ onLocationChange }) => {
   useMapEvents({
     click(e) {
-      onLocationChange([
-        e.latlng.lat,
-        e.latlng.lng,
-      ]);
+      onLocationChange([e.latlng.lat, e.latlng.lng]);
     },
   });
 
@@ -168,10 +165,7 @@ const MapClickHandler = ({ onLocationChange }) => {
 // DRAGGABLE MARKER
 // =====================================================
 
-const LocationMarker = ({
-  position,
-  onLocationChange,
-}) => {
+const LocationMarker = ({ position, onLocationChange }) => {
   if (!position) return null;
 
   return (
@@ -183,10 +177,7 @@ const LocationMarker = ({
           const marker = event.target;
           const location = marker.getLatLng();
 
-          await onLocationChange([
-            location.lat,
-            location.lng,
-          ]);
+          await onLocationChange([location.lat, location.lng]);
         },
       }}
     />
@@ -200,43 +191,22 @@ const LocationMarker = ({
 const convertLocationToAddress = (data) => {
   const a = data?.address || {};
 
-  const pincode =
-    a.postcode ||
-    "";
+  const pincode = a.postcode || "";
 
   const area =
-    a.suburb ||
-    a.neighbourhood ||
-    a.hamlet ||
-    a.village ||
-    a.locality ||
-    "";
+    a.suburb || a.neighbourhood || a.hamlet || a.village || a.locality || "";
 
   const district =
-    a.state_district ||
-    a.district ||
-    a.county ||
-    a.city_district ||
-    "";
+    a.state_district || a.district || a.county || a.city_district || "";
 
   const city =
-    a.city ||
-    a.town ||
-    a.municipality ||
-    a.village ||
-    a.city_district ||
-    "";
+    a.city || a.town || a.municipality || a.village || a.city_district || "";
 
-  const state =
-    a.state ||
-    "";
+  const state = a.state || "";
 
-  const houseParts = [
-    a.house_number,
-    a.road,
-    a.street,
-    a.neighbourhood,
-  ].filter(Boolean);
+  const houseParts = [a.house_number, a.road, a.street, a.neighbourhood].filter(
+    Boolean,
+  );
 
   const house = houseParts.join(", ");
 
@@ -258,80 +228,59 @@ const BookingAddress = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const {
-    service,
-    desc,
-    price,
-  } = location.state || {};
+  const { service, desc, price } = location.state || {};
 
   // ===================================================
   // STATES
   // ===================================================
 
-  const [addressType, setAddressType] =
-    useState("Home");
+  const [addressType, setAddressType] = useState("Home");
 
-  const [locationLoading, setLocationLoading] =
-    useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
 
-  const [searchLoading, setSearchLoading] =
-    useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
 
-  const [savingAddress, setSavingAddress] =
-    useState(false);
+  const [savingAddress, setSavingAddress] = useState(false);
 
-  const [searchText, setSearchText] =
-    useState("");
+  const [searchText, setSearchText] = useState("");
 
-  const [searchResults, setSearchResults] =
-    useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
-  const [showMap, setShowMap] =
-    useState(false);
+  const [showMap, setShowMap] = useState(false);
 
-  const [mapPosition, setMapPosition] =
-    useState(null);
+  const [mapPosition, setMapPosition] = useState(null);
 
-  const [mapAddress, setMapAddress] =
-    useState(null);
+  const [mapAddress, setMapAddress] = useState(null);
 
-  const [locationSaved, setLocationSaved] =
-    useState(false);
+  const [locationSaved, setLocationSaved] = useState(false);
 
-  const [selectedLocation, setSelectedLocation] =
-    useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const [gpsAccuracy, setGpsAccuracy] =
-    useState(null);
+  const [gpsAccuracy, setGpsAccuracy] = useState(null);
 
-  const [address, setAddress] =
-    useState({
-      name: "",
-      mobile: "",
-      pincode: "",
-      area: "",
-      house: "",
-      city: "",
-      district: "",
-      state: "",
-      landmark: "",
-      alternatePhone: "",
-    });
+  const [address, setAddress] = useState({
+    name: "",
+    mobile: "",
+    pincode: "",
+    area: "",
+    house: "",
+    city: "",
+    district: "",
+    state: "",
+    landmark: "",
+    alternatePhone: "",
+  });
 
   // ===================================================
   // RESTORE SAVED ADDRESS
   // ===================================================
 
   useEffect(() => {
-    const savedAddress =
-      localStorage.getItem(
-        "bookingAddress"
-      );
+    const savedAddress = localStorage.getItem("bookingAddress");
 
     if (savedAddress) {
       try {
-        const parsed =
-          JSON.parse(savedAddress);
+        const parsed = JSON.parse(savedAddress);
 
         setAddress((prev) => ({
           ...prev,
@@ -339,63 +288,38 @@ const BookingAddress = () => {
         }));
 
         if (parsed.addressType) {
-          setAddressType(
-            parsed.addressType
-          );
+          setAddressType(parsed.addressType);
         }
 
         if (parsed.location) {
           setSelectedLocation({
-            latitude:
-              parsed.location.latitude,
+            latitude: parsed.location.latitude,
 
-            longitude:
-              parsed.location.longitude,
+            longitude: parsed.location.longitude,
 
-            accuracy:
-              parsed.location.accuracy ||
-              null,
+            accuracy: parsed.location.accuracy || null,
 
-            displayName:
-              parsed.location.displayName ||
-              "",
+            displayName: parsed.location.displayName || "",
           });
 
-          setMapPosition([
-            parsed.location.latitude,
-            parsed.location.longitude,
-          ]);
+          setMapPosition([parsed.location.latitude, parsed.location.longitude]);
 
-          setGpsAccuracy(
-            parsed.location.accuracy ||
-              null
-          );
+          setGpsAccuracy(parsed.location.accuracy || null);
 
           setMapAddress({
-            displayName:
-              parsed.location.displayName ||
-              "",
-            pincode:
-              parsed.pincode || "",
-            area:
-              parsed.area || "",
-            house:
-              parsed.house || "",
-            city:
-              parsed.city || "",
-            district:
-              parsed.district || "",
-            state:
-              parsed.state || "",
+            displayName: parsed.location.displayName || "",
+            pincode: parsed.pincode || "",
+            area: parsed.area || "",
+            house: parsed.house || "",
+            city: parsed.city || "",
+            district: parsed.district || "",
+            state: parsed.state || "",
           });
 
           setLocationSaved(true);
         }
       } catch (error) {
-        console.error(
-          "Booking address restore error:",
-          error
-        );
+        console.error("Booking address restore error:", error);
       }
     }
 
@@ -403,39 +327,27 @@ const BookingAddress = () => {
     // RESTORE OLD SAVED LOCATION
     // =================================================
 
-    const savedLocation =
-      localStorage.getItem(
-        "savedLocation"
-      );
+    const savedLocation = localStorage.getItem("savedLocation");
 
     if (!savedLocation) return;
 
     try {
-      const parsed =
-        JSON.parse(savedLocation);
+      const parsed = JSON.parse(savedLocation);
 
       if (
-        typeof parsed.latitude ===
-          "number" &&
-        typeof parsed.longitude ===
-          "number"
+        typeof parsed.latitude === "number" &&
+        typeof parsed.longitude === "number"
       ) {
         setSelectedLocation(parsed);
 
-        setMapPosition([
-          parsed.latitude,
-          parsed.longitude,
-        ]);
+        setMapPosition([parsed.latitude, parsed.longitude]);
 
         setMapAddress({
           ...(parsed.address || {}),
-          displayName:
-            parsed.displayName || "",
+          displayName: parsed.displayName || "",
         });
 
-        setGpsAccuracy(
-          parsed.accuracy || null
-        );
+        setGpsAccuracy(parsed.accuracy || null);
 
         setLocationSaved(true);
 
@@ -447,10 +359,7 @@ const BookingAddress = () => {
         }
       }
     } catch (error) {
-      console.error(
-        "Saved location error:",
-        error
-      );
+      console.error("Saved location error:", error);
     }
   }, []);
 
@@ -459,10 +368,7 @@ const BookingAddress = () => {
   // ===================================================
 
   const handleChange = (e) => {
-    const {
-      name,
-      value,
-    } = e.target;
+    const { name, value } = e.target;
 
     setAddress((prev) => ({
       ...prev,
@@ -476,48 +382,32 @@ const BookingAddress = () => {
   // REVERSE GEOCODING
   // ===================================================
 
-  const reverseGeocode = async (
-    latitude,
-    longitude
-  ) => {
+  const reverseGeocode = async (latitude, longitude) => {
     try {
-      const response =
-        await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&zoom=18&accept-language=en`,
-          {
-            headers: {
-              Accept:
-                "application/json",
-            },
-          }
-        );
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&zoom=18&accept-language=en`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
-        throw new Error(
-          "Reverse geocoding failed"
-        );
+        throw new Error("Reverse geocoding failed");
       }
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
-      const converted =
-        convertLocationToAddress(
-          data
-        );
+      const converted = convertLocationToAddress(data);
 
       return {
         ...converted,
 
-        displayName:
-          data.display_name ||
-          "",
+        displayName: data.display_name || "",
       };
     } catch (error) {
-      console.error(
-        "Reverse geocode error:",
-        error
-      );
+      console.error("Reverse geocode error:", error);
 
       return null;
     }
@@ -533,29 +423,17 @@ const BookingAddress = () => {
     setAddress((prev) => ({
       ...prev,
 
-      pincode:
-        result.pincode ||
-        prev.pincode,
+      pincode: result.pincode || prev.pincode,
 
-      area:
-        result.area ||
-        prev.area,
+      area: result.area || prev.area,
 
-      house:
-        result.house ||
-        prev.house,
+      house: result.house || prev.house,
 
-      city:
-        result.city ||
-        prev.city,
+      city: result.city || prev.city,
 
-      district:
-        result.district ||
-        prev.district,
+      district: result.district || prev.district,
 
-      state:
-        result.state ||
-        prev.state,
+      state: result.state || prev.state,
     }));
   };
 
@@ -563,10 +441,7 @@ const BookingAddress = () => {
   // APPLY MAP LOCATION
   // ===================================================
 
-  const applyMapLocation = async (
-    position,
-    accuracy = null
-  ) => {
+  const applyMapLocation = async (position, accuracy = null) => {
     setMapPosition(position);
 
     setLocationLoading(true);
@@ -575,11 +450,7 @@ const BookingAddress = () => {
       setGpsAccuracy(accuracy);
     }
 
-    const result =
-      await reverseGeocode(
-        position[0],
-        position[1]
-      );
+    const result = await reverseGeocode(position[0], position[1]);
 
     if (result) {
       setMapAddress(result);
@@ -588,20 +459,16 @@ const BookingAddress = () => {
         latitude: position[0],
         longitude: position[1],
         accuracy,
-        displayName:
-          result.displayName || "",
+        displayName: result.displayName || "",
         address: result,
       };
 
-      setSelectedLocation(
-        locationObject
-      );
+      setSelectedLocation(locationObject);
 
       fillAddress(result);
     } else {
       const fallbackAddress = {
-        displayName:
-          "Selected location",
+        displayName: "Selected location",
         pincode: "",
         area: "",
         house: "",
@@ -610,16 +477,13 @@ const BookingAddress = () => {
         state: "",
       };
 
-      setMapAddress(
-        fallbackAddress
-      );
+      setMapAddress(fallbackAddress);
 
       setSelectedLocation({
         latitude: position[0],
         longitude: position[1],
         accuracy,
-        displayName:
-          "Selected location",
+        displayName: "Selected location",
         address: {},
       });
     }
@@ -632,12 +496,8 @@ const BookingAddress = () => {
   // ===================================================
 
   const getCurrentLocation = () => {
-    if (
-      !navigator.geolocation
-    ) {
-      alert(
-        "Your browser does not support location."
-      );
+    if (!navigator.geolocation) {
+      alert("Your browser does not support location.");
       return;
     }
 
@@ -645,65 +505,34 @@ const BookingAddress = () => {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const {
-          latitude,
-          longitude,
-          accuracy,
-        } = position.coords;
+        const { latitude, longitude, accuracy } = position.coords;
 
-        console.log(
-          "REAL GPS:",
-          latitude,
-          longitude
-        );
+        console.log("REAL GPS:", latitude, longitude);
 
-        console.log(
-          "GPS ACCURACY:",
-          accuracy
-        );
+        console.log("GPS ACCURACY:", accuracy);
 
-        await applyMapLocation(
-          [
-            latitude,
-            longitude,
-          ],
-          accuracy
-        );
+        await applyMapLocation([latitude, longitude], accuracy);
       },
 
       (error) => {
-        console.error(
-          "GPS ERROR:",
-          error
-        );
+        console.error("GPS ERROR:", error);
 
         setLocationLoading(false);
 
-        if (
-          error.code ===
-          error.PERMISSION_DENIED
-        ) {
+        if (error.code === error.PERMISSION_DENIED) {
           alert(
-            "Location permission denied.\n\nChrome → 🔒 → Location → Allow → Reload page."
+            "Location permission denied.\n\nChrome → 🔒 → Location → Allow → Reload page.",
           );
-        } else if (
-          error.code ===
-          error.POSITION_UNAVAILABLE
-        ) {
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
           alert(
-            "Location unavailable.\n\nWindows Location ON karein ya mobile GPS se try karein."
+            "Location unavailable.\n\nWindows Location ON karein ya mobile GPS se try karein.",
           );
-        } else if (
-          error.code ===
-          error.TIMEOUT
-        ) {
+        } else if (error.code === error.TIMEOUT) {
           alert(
-            "Location detect hone me time lag raha hai. Dobara try karein."
+            "Location detect hone me time lag raha hai. Dobara try karein.",
           );
         } else {
-          alert(
-            "Current location detect nahi ho saki."
-          );
+          alert("Current location detect nahi ho saki.");
         }
       },
 
@@ -711,7 +540,7 @@ const BookingAddress = () => {
         enableHighAccuracy: true,
         timeout: 60000,
         maximumAge: 0,
-      }
+      },
     );
   };
 
@@ -741,22 +570,18 @@ const BookingAddress = () => {
   // SEARCH NOMINATIM
   // ===================================================
 
-  const searchNominatim = async (
-    query
-  ) => {
+  const searchNominatim = async (query) => {
     try {
-      const response =
-        await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=10&countrycodes=in&q=${encodeURIComponent(
-            query
-          )}`,
-          {
-            headers: {
-              Accept:
-                "application/json",
-            },
-          }
-        );
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=10&countrycodes=in&q=${encodeURIComponent(
+          query,
+        )}`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
         return [];
@@ -764,10 +589,7 @@ const BookingAddress = () => {
 
       return await response.json();
     } catch (error) {
-      console.error(
-        "Nominatim search:",
-        error
-      );
+      console.error("Nominatim search:", error);
 
       return [];
     }
@@ -777,96 +599,67 @@ const BookingAddress = () => {
   // SEARCH PHOTON
   // ===================================================
 
-  const searchPhoton = async (
-    query
-  ) => {
+  const searchPhoton = async (query) => {
     try {
-      const response =
-        await fetch(
-          `https://photon.komoot.io/api/?q=${encodeURIComponent(
-            query
-          )}&limit=10`,
-          {
-            headers: {
-              Accept:
-                "application/json",
-            },
-          }
-        );
+      const response = await fetch(
+        `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
         return [];
       }
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
-      return (
-        data.features || []
-      ).map(
-        (item, index) => {
-          const [
-            longitude,
-            latitude,
-          ] =
-            item.geometry
-              ?.coordinates || [];
+      return (data.features || []).map((item, index) => {
+        const [longitude, latitude] = item.geometry?.coordinates || [];
 
-          const props =
-            item.properties || {};
+        const props = item.properties || {};
 
-          const displayName = [
-            props.name,
-            props.locality,
-            props.district,
-            props.state,
-            props.postcode,
-            props.country,
-          ]
-            .filter(Boolean)
-            .join(", ");
+        const displayName = [
+          props.name,
+          props.locality,
+          props.district,
+          props.state,
+          props.postcode,
+          props.country,
+        ]
+          .filter(Boolean)
+          .join(", ");
 
-          return {
-            place_id:
-              `photon-${index}-${latitude}-${longitude}`,
+        return {
+          place_id: `photon-${index}-${latitude}-${longitude}`,
 
-            lat: latitude,
+          lat: latitude,
 
-            lon: longitude,
+          lon: longitude,
 
-            display_name:
-              displayName,
+          display_name: displayName,
 
-            address: {
-              postcode:
-                props.postcode,
+          address: {
+            postcode: props.postcode,
 
-              suburb:
-                props.locality,
+            suburb: props.locality,
 
-              village:
-                props.locality,
+            village: props.locality,
 
-              town:
-                props.city,
+            town: props.city,
 
-              city:
-                props.city,
+            city: props.city,
 
-              state:
-                props.state,
+            state: props.state,
 
-              country:
-                props.country,
-            },
-          };
-        }
-      );
+            country: props.country,
+          },
+        };
+      });
     } catch (error) {
-      console.error(
-        "Photon search:",
-        error
-      );
+      console.error("Photon search:", error);
 
       return [];
     }
@@ -877,13 +670,10 @@ const BookingAddress = () => {
   // ===================================================
 
   const searchLocation = async () => {
-    const query =
-      searchText.trim();
+    const query = searchText.trim();
 
     if (!query) {
-      alert(
-        "Area, village, city ya pincode enter karein."
-      );
+      alert("Area, village, city ya pincode enter karein.");
       return;
     }
 
@@ -891,11 +681,7 @@ const BookingAddress = () => {
     setSearchResults([]);
 
     try {
-      const queries = [
-        query,
-        `${query}, India`,
-        `${query}, Bihar, India`,
-      ];
+      const queries = [query, `${query}, India`, `${query}, Bihar, India`];
 
       let results = [];
 
@@ -903,24 +689,14 @@ const BookingAddress = () => {
       // NOMINATIM SEARCH
       // ===============================================
 
-      for (
-        const searchQuery of queries
-      ) {
-        const data =
-          await searchNominatim(
-            searchQuery
-          );
+      for (const searchQuery of queries) {
+        const data = await searchNominatim(searchQuery);
 
         if (data.length) {
-          results = [
-            ...results,
-            ...data,
-          ];
+          results = [...results, ...data];
         }
 
-        if (
-          results.length >= 10
-        ) {
+        if (results.length >= 10) {
           break;
         }
       }
@@ -932,51 +708,28 @@ const BookingAddress = () => {
       const uniqueResults = [];
       const seen = new Set();
 
-      results.forEach(
-        (item) => {
-          const key =
-            `${item.lat}-${item.lon}`;
+      results.forEach((item) => {
+        const key = `${item.lat}-${item.lon}`;
 
-          if (
-            !seen.has(key)
-          ) {
-            seen.add(key);
-            uniqueResults.push(
-              item
-            );
-          }
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueResults.push(item);
         }
-      );
+      });
 
       // ===============================================
       // PHOTON FALLBACK
       // ===============================================
 
-      if (
-        uniqueResults.length ===
-        0
-      ) {
-        const photonResults =
-          await searchPhoton(
-            `${query}, Bihar, India`
-          );
+      if (uniqueResults.length === 0) {
+        const photonResults = await searchPhoton(`${query}, Bihar, India`);
 
-        uniqueResults.push(
-          ...photonResults
-        );
+        uniqueResults.push(...photonResults);
       }
 
-      setSearchResults(
-        uniqueResults.slice(
-          0,
-          10
-        )
-      );
+      setSearchResults(uniqueResults.slice(0, 10));
 
-      if (
-        uniqueResults.length ===
-        0
-      ) {
+      if (uniqueResults.length === 0) {
         alert(
           `Location nahi mili.
 
@@ -990,18 +743,13 @@ Sirauli Ramnagra
 
 Ramnagra Sitamarhi
 
-Sirauli, Sitamarhi, Bihar`
+Sirauli, Sitamarhi, Bihar`,
         );
       }
     } catch (error) {
-      console.error(
-        "Location search error:",
-        error
-      );
+      console.error("Location search error:", error);
 
-      alert(
-        "Location search failed. Please try again."
-      );
+      alert("Location search failed. Please try again.");
     } finally {
       setSearchLoading(false);
     }
@@ -1011,66 +759,41 @@ Sirauli, Sitamarhi, Bihar`
   // SELECT SEARCH LOCATION
   // ===================================================
 
-  const selectSearchLocation = async (
-    result
-  ) => {
-    const latitude =
-      Number(result.lat);
+  const selectSearchLocation = async (result) => {
+    const latitude = Number(result.lat);
 
-    const longitude =
-      Number(result.lon);
+    const longitude = Number(result.lon);
 
-    if (
-      Number.isNaN(latitude) ||
-      Number.isNaN(longitude)
-    ) {
+    if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
       return;
     }
 
-    const converted =
-      convertLocationToAddress(
-        result
-      );
+    const converted = convertLocationToAddress(result);
 
     const locationObject = {
       latitude,
       longitude,
 
-      displayName:
-        result.display_name ||
-        "",
+      displayName: result.display_name || "",
 
-      address:
-        converted,
+      address: converted,
     };
 
-    setMapPosition([
-      latitude,
-      longitude,
-    ]);
+    setMapPosition([latitude, longitude]);
 
     setMapAddress({
       ...converted,
 
-      displayName:
-        result.display_name ||
-        "",
+      displayName: result.display_name || "",
     });
 
-    setSelectedLocation(
-      locationObject
-    );
+    setSelectedLocation(locationObject);
 
-    fillAddress(
-      converted
-    );
+    fillAddress(converted);
 
     setSearchResults([]);
 
-    setSearchText(
-      result.display_name ||
-        ""
-    );
+    setSearchText(result.display_name || "");
 
     setLocationSaved(false);
 
@@ -1081,12 +804,9 @@ Sirauli, Sitamarhi, Bihar`
   // MAP POSITION CHANGE
   // ===================================================
 
-  const handleMapPositionChange =
-    async (position) => {
-      await applyMapLocation(
-        position
-      );
-    };
+  const handleMapPositionChange = async (position) => {
+    await applyMapLocation(position);
+  };
 
   // ===================================================
   // SAVE MAP LOCATION
@@ -1094,61 +814,39 @@ Sirauli, Sitamarhi, Bihar`
 
   const saveMapLocation = () => {
     if (!mapPosition) {
-      alert(
-        "Please select a location first."
-      );
+      alert("Please select a location first.");
       return;
     }
 
     if (!mapAddress) {
-      alert(
-        "Address load hone ka wait karein."
-      );
+      alert("Address load hone ka wait karein.");
       return;
     }
 
     const locationObject = {
-      latitude:
-        mapPosition[0],
+      latitude: mapPosition[0],
 
-      longitude:
-        mapPosition[1],
+      longitude: mapPosition[1],
 
-      accuracy:
-        gpsAccuracy,
+      accuracy: gpsAccuracy,
 
-      displayName:
-        mapAddress.displayName ||
-        "",
+      displayName: mapAddress.displayName || "",
 
       address: {
-        pincode:
-          mapAddress.pincode ||
-          "",
+        pincode: mapAddress.pincode || "",
 
-        area:
-          mapAddress.area ||
-          "",
+        area: mapAddress.area || "",
 
-        house:
-          mapAddress.house ||
-          "",
+        house: mapAddress.house || "",
 
-        city:
-          mapAddress.city ||
-          "",
+        city: mapAddress.city || "",
 
-        district:
-          mapAddress.district ||
-          "",
+        district: mapAddress.district || "",
 
-        state:
-          mapAddress.state ||
-          "",
+        state: mapAddress.state || "",
       },
 
-      savedAt:
-        new Date().toISOString(),
+      savedAt: new Date().toISOString(),
     };
 
     // ===============================================
@@ -1158,45 +856,26 @@ Sirauli, Sitamarhi, Bihar`
     setAddress((prev) => ({
       ...prev,
 
-      pincode:
-        mapAddress.pincode ||
-        prev.pincode,
+      pincode: mapAddress.pincode || prev.pincode,
 
-      area:
-        mapAddress.area ||
-        prev.area,
+      area: mapAddress.area || prev.area,
 
-      house:
-        mapAddress.house ||
-        prev.house,
+      house: mapAddress.house || prev.house,
 
-      city:
-        mapAddress.city ||
-        prev.city,
+      city: mapAddress.city || prev.city,
 
-      district:
-        mapAddress.district ||
-        prev.district,
+      district: mapAddress.district || prev.district,
 
-      state:
-        mapAddress.state ||
-        prev.state,
+      state: mapAddress.state || prev.state,
     }));
 
     // ===============================================
     // LOCAL STORAGE
     // ===============================================
 
-    localStorage.setItem(
-      "savedLocation",
-      JSON.stringify(
-        locationObject
-      )
-    );
+    localStorage.setItem("savedLocation", JSON.stringify(locationObject));
 
-    setSelectedLocation(
-      locationObject
-    );
+    setSelectedLocation(locationObject);
 
     setLocationSaved(true);
 
@@ -1207,14 +886,10 @@ Sirauli, Sitamarhi, Bihar`
 
 ${
   mapAddress.displayName ||
-  `${mapAddress.area || ""}, ${
-    mapAddress.district || ""
-  }, ${
+  `${mapAddress.area || ""}, ${mapAddress.district || ""}, ${
     mapAddress.state || ""
-  } - ${
-    mapAddress.pincode || ""
-  }`
-}`
+  } - ${mapAddress.pincode || ""}`
+}`,
     );
   };
 
@@ -1223,9 +898,7 @@ ${
   // ===================================================
 
   const removeSavedLocation = () => {
-    localStorage.removeItem(
-      "savedLocation"
-    );
+    localStorage.removeItem("savedLocation");
 
     setLocationSaved(false);
 
@@ -1254,30 +927,18 @@ ${
   // ===================================================
 
   const getUserId = () => {
-    const userData =
-      localStorage.getItem(
-        "user"
-      );
+    const userData = localStorage.getItem("user");
 
     if (!userData) {
       return null;
     }
 
     try {
-      const user =
-        JSON.parse(userData);
+      const user = JSON.parse(userData);
 
-      return (
-        user?._id ||
-        user?.id ||
-        user?.userId ||
-        null
-      );
+      return user?._id || user?.id || user?.userId || null;
     } catch (error) {
-      console.error(
-        "User JSON parse error:",
-        error
-      );
+      console.error("User JSON parse error:", error);
 
       return null;
     }
@@ -1302,46 +963,25 @@ ${
       !address.district ||
       !address.state
     ) {
-      alert(
-        "Please fill complete address details."
-      );
+      alert("Please fill complete address details.");
 
       return;
     }
 
-    if (
-      !/^[0-9]{10}$/.test(
-        address.mobile
-      )
-    ) {
-      alert(
-        "Please enter valid 10-digit mobile number."
-      );
+    if (!/^[0-9]{10}$/.test(address.mobile)) {
+      alert("Please enter valid 10-digit mobile number.");
 
       return;
     }
 
-    if (
-      !/^[0-9]{6}$/.test(
-        address.pincode
-      )
-    ) {
-      alert(
-        "Please enter valid 6-digit pincode."
-      );
+    if (!/^[0-9]{6}$/.test(address.pincode)) {
+      alert("Please enter valid 6-digit pincode.");
 
       return;
     }
 
-    if (
-      address.alternatePhone &&
-      !/^[0-9]{10}$/.test(
-        address.alternatePhone
-      )
-    ) {
-      alert(
-        "Please enter valid alternate phone number."
-      );
+    if (address.alternatePhone && !/^[0-9]{10}$/.test(address.alternatePhone)) {
+      alert("Please enter valid alternate phone number.");
 
       return;
     }
@@ -1350,13 +990,10 @@ ${
     // GET LOGGED IN USER
     // ===============================================
 
-    const userId =
-      getUserId();
+    const userId = getUserId();
 
     if (!userId) {
-      alert(
-        "Please login first."
-      );
+      alert("Please login first.");
 
       return;
     }
@@ -1365,29 +1002,17 @@ ${
     // FINAL LOCATION
     // ===============================================
 
-    const finalLocation =
-      selectedLocation
-        ? {
-            latitude:
-              Number(
-                selectedLocation.latitude
-              ),
+    const finalLocation = selectedLocation
+      ? {
+          latitude: Number(selectedLocation.latitude),
 
-            longitude:
-              Number(
-                selectedLocation.longitude
-              ),
+          longitude: Number(selectedLocation.longitude),
 
-            accuracy:
-              selectedLocation.accuracy ||
-              gpsAccuracy ||
-              null,
+          accuracy: selectedLocation.accuracy || gpsAccuracy || null,
 
-            displayName:
-              selectedLocation.displayName ||
-              "",
-          }
-        : null;
+          displayName: selectedLocation.displayName || "",
+        }
+      : null;
 
     // ===============================================
     // FINAL ADDRESS
@@ -1396,54 +1021,38 @@ ${
     const finalAddress = {
       userId,
 
-      name:
-        address.name.trim(),
+      name: address.name.trim(),
 
-      mobile:
-        address.mobile.trim(),
+      mobile: address.mobile.trim(),
 
-      pincode:
-        address.pincode.trim(),
+      pincode: address.pincode.trim(),
 
-      area:
-        address.area.trim(),
+      area: address.area.trim(),
 
-      house:
-        address.house.trim(),
+      house: address.house.trim(),
 
-      city:
-        address.city.trim(),
+      city: address.city.trim(),
 
-      district:
-        address.district.trim(),
+      district: address.district.trim(),
 
-      state:
-        address.state.trim(),
+      state: address.state.trim(),
 
-      landmark:
-        address.landmark
-          ? address.landmark.trim()
-          : "",
+      landmark: address.landmark ? address.landmark.trim() : "",
 
-      alternatePhone:
-        address.alternatePhone
-          ? address.alternatePhone.trim()
-          : "",
+      alternatePhone: address.alternatePhone
+        ? address.alternatePhone.trim()
+        : "",
 
       addressType,
 
-      location:
-        finalLocation,
+      location: finalLocation,
     };
 
     // ===============================================
     // DEBUG
     // ===============================================
 
-    console.log(
-      "FINAL ADDRESS:",
-      finalAddress
-    );
+    console.log("FINAL ADDRESS:", finalAddress);
 
     setSavingAddress(true);
 
@@ -1452,27 +1061,18 @@ ${
       // MONGODB API
       // =============================================
 
-      const response =
-        await axios.post(
-          "http://localhost:5000/api/addresses/save",
-          finalAddress
-        );
-
-      console.log(
-        "ADDRESS MONGODB RESPONSE:",
-        response.data
+      const response = await axios.post(
+        "https://apnabazar-6zxf.onrender.com/api/addresses/save",
+        finalAddress,
       );
+
+      console.log("ADDRESS MONGODB RESPONSE:", response.data);
 
       // =============================================
       // LOCAL STORAGE
       // =============================================
 
-      localStorage.setItem(
-        "bookingAddress",
-        JSON.stringify(
-          finalAddress
-        )
-      );
+      localStorage.setItem("bookingAddress", JSON.stringify(finalAddress));
 
       // =============================================
       // ALSO SAVE LOCATION
@@ -1482,38 +1082,28 @@ ${
         localStorage.setItem(
           "savedLocation",
           JSON.stringify({
-            latitude:
-              finalLocation.latitude,
+            latitude: finalLocation.latitude,
 
-            longitude:
-              finalLocation.longitude,
+            longitude: finalLocation.longitude,
 
-            accuracy:
-              finalLocation.accuracy,
+            accuracy: finalLocation.accuracy,
 
-            displayName:
-              finalLocation.displayName,
+            displayName: finalLocation.displayName,
 
             address: {
-              pincode:
-                finalAddress.pincode,
+              pincode: finalAddress.pincode,
 
-              area:
-                finalAddress.area,
+              area: finalAddress.area,
 
-              house:
-                finalAddress.house,
+              house: finalAddress.house,
 
-              city:
-                finalAddress.city,
+              city: finalAddress.city,
 
-              district:
-                finalAddress.district,
+              district: finalAddress.district,
 
-              state:
-                finalAddress.state,
+              state: finalAddress.state,
             },
-          })
+          }),
         );
       }
 
@@ -1521,48 +1111,29 @@ ${
       // SUCCESS
       // =============================================
 
-      alert(
-        response.data?.message ||
-          "Address saved successfully!"
-      );
+      alert(response.data?.message || "Address saved successfully!");
 
       // =============================================
       // ORDER SUMMARY
       // =============================================
 
-      navigate(
-        "/order-summary",
-        {
-          state: {
-            service,
-            desc,
-            price,
-            address:
-              finalAddress,
-          },
-        }
-      );
+      navigate("/order-summary", {
+        state: {
+          service,
+          desc,
+          price,
+          address: finalAddress,
+        },
+      });
     } catch (error) {
-      console.error(
-        "SAVE ADDRESS ERROR:",
-        error
-      );
+      console.error("SAVE ADDRESS ERROR:", error);
 
-      console.error(
-        "SERVER RESPONSE:",
-        error.response?.data
-      );
+      console.error("SERVER RESPONSE:", error.response?.data);
 
-      if (
-        error.response?.data?.message
-      ) {
-        alert(
-          error.response.data.message
-        );
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
       } else {
-        alert(
-          "Address MongoDB me save nahi ho paya. Backend check karein."
-        );
+        alert("Address MongoDB me save nahi ho paya. Backend check karein.");
       }
     } finally {
       setSavingAddress(false);
@@ -1575,33 +1146,21 @@ ${
 
   return (
     <div className="address-page">
-
       <div className="address-card">
-
         {/* =================================================
             SEARCH
         ================================================= */}
 
         <div className="location-search-section">
-
           <div className="location-search">
-
             <FiSearch />
 
             <input
               type="text"
-              value={
-                searchText
-              }
-              onChange={(e) =>
-                setSearchText(
-                  e.target.value
-                )
-              }
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
               onKeyDown={(e) => {
-                if (
-                  e.key === "Enter"
-                ) {
+                if (e.key === "Enter") {
                   searchLocation();
                 }
               }}
@@ -1610,60 +1169,33 @@ ${
 
             <button
               type="button"
-              onClick={
-                searchLocation
-              }
-              disabled={
-                searchLoading
-              }
+              onClick={searchLocation}
+              disabled={searchLoading}
             >
-              {searchLoading
-                ? "Searching..."
-                : "Search"}
+              {searchLoading ? "Searching..." : "Search"}
             </button>
-
           </div>
 
           {/* SEARCH RESULTS */}
 
-          {searchResults.length >
-            0 && (
+          {searchResults.length > 0 && (
             <div className="search-results">
+              {searchResults.map((result, index) => (
+                <button
+                  key={
+                    result.place_id || `${result.lat}-${result.lon}-${index}`
+                  }
+                  type="button"
+                  className="search-result"
+                  onClick={() => selectSearchLocation(result)}
+                >
+                  <FiMapPin />
 
-              {searchResults.map(
-                (
-                  result,
-                  index
-                ) => (
-                  <button
-                    key={
-                      result.place_id ||
-                      `${result.lat}-${result.lon}-${index}`
-                    }
-                    type="button"
-                    className="search-result"
-                    onClick={() =>
-                      selectSearchLocation(
-                        result
-                      )
-                    }
-                  >
-
-                    <FiMapPin />
-
-                    <span>
-                      {
-                        result.display_name
-                      }
-                    </span>
-
-                  </button>
-                )
-              )}
-
+                  <span>{result.display_name}</span>
+                </button>
+              ))}
             </div>
           )}
-
         </div>
 
         {/* =================================================
@@ -1671,30 +1203,21 @@ ${
         ================================================= */}
 
         <div className="location-actions">
-
           <button
             className="location-map-button"
             type="button"
-            onClick={
-              openMap
-            }
+            onClick={openMap}
           >
             <FiMapPin />
 
-            <span>
-              Select location on map
-            </span>
+            <span>Select location on map</span>
           </button>
 
           <button
             className="location-btn"
             type="button"
-            onClick={
-              handleCurrentLocation
-            }
-            disabled={
-              locationLoading
-            }
+            onClick={handleCurrentLocation}
+            disabled={locationLoading}
           >
             <FiCrosshair />
 
@@ -1702,84 +1225,57 @@ ${
               ? "Detecting your location..."
               : "Use my current location"}
           </button>
-
         </div>
 
         {/* =================================================
             SAVED LOCATION
         ================================================= */}
 
-        {locationSaved &&
-          selectedLocation && (
-            <div className="saved-location-box">
-
-              <div className="saved-location-left">
-
-                <div className="saved-icon">
-                  <FiCheck />
-                </div>
-
-                <div>
-
-                  <strong>
-                    Location saved
-                  </strong>
-
-                  <p>
-                    {
-                      selectedLocation.displayName ||
-                      `${address.area}, ${address.district}, ${address.state} - ${address.pincode}`
-                    }
-                  </p>
-
-                </div>
-
+        {locationSaved && selectedLocation && (
+          <div className="saved-location-box">
+            <div className="saved-location-left">
+              <div className="saved-icon">
+                <FiCheck />
               </div>
 
-              <button
-                type="button"
-                onClick={
-                  removeSavedLocation
-                }
-              >
-                Change
-              </button>
+              <div>
+                <strong>Location saved</strong>
 
+                <p>
+                  {selectedLocation.displayName ||
+                    `${address.area}, ${address.district}, ${address.state} - ${address.pincode}`}
+                </p>
+              </div>
             </div>
-          )}
+
+            <button type="button" onClick={removeSavedLocation}>
+              Change
+            </button>
+          </div>
+        )}
 
         {/* =================================================
             NAME + MOBILE
         ================================================= */}
 
         <div className="row">
-
           <input
             name="name"
-            value={
-              address.name
-            }
-            onChange={
-              handleChange
-            }
+            value={address.name}
+            onChange={handleChange}
             type="text"
             placeholder="Name"
           />
 
           <input
             name="mobile"
-            value={
-              address.mobile
-            }
-            onChange={
-              handleChange
-            }
+            value={address.mobile}
+            onChange={handleChange}
             type="text"
             maxLength="10"
             inputMode="numeric"
             placeholder="10-digit mobile number"
           />
-
         </div>
 
         {/* =================================================
@@ -1787,15 +1283,10 @@ ${
         ================================================= */}
 
         <div className="row">
-
           <input
             name="pincode"
-            value={
-              address.pincode
-            }
-            onChange={
-              handleChange
-            }
+            value={address.pincode}
+            onChange={handleChange}
             type="text"
             maxLength="6"
             inputMode="numeric"
@@ -1804,16 +1295,11 @@ ${
 
           <input
             name="area"
-            value={
-              address.area
-            }
-            onChange={
-              handleChange
-            }
+            value={address.area}
+            onChange={handleChange}
             type="text"
             placeholder="Locality / Area"
           />
-
         </div>
 
         {/* =================================================
@@ -1822,12 +1308,8 @@ ${
 
         <textarea
           name="house"
-          value={
-            address.house
-          }
-          onChange={
-            handleChange
-          }
+          value={address.house}
+          onChange={handleChange}
           rows="4"
           placeholder="Address (Area and Street)"
         />
@@ -1837,69 +1319,37 @@ ${
         ================================================= */}
 
         <div className="row">
-
           <input
             name="city"
-            value={
-              address.city
-            }
-            onChange={
-              handleChange
-            }
+            value={address.city}
+            onChange={handleChange}
             type="text"
             placeholder="City / Town"
           />
 
-          {address.state ===
-          "Bihar" ? (
+          {address.state === "Bihar" ? (
             <select
               name="district"
-              value={
-                address.district
-              }
-              onChange={
-                handleChange
-              }
+              value={address.district}
+              onChange={handleChange}
             >
+              <option value="">-- Select District --</option>
 
-              <option value="">
-                -- Select District --
-              </option>
-
-              {biharDistricts.map(
-                (
-                  district
-                ) => (
-                  <option
-                    key={
-                      district
-                    }
-                    value={
-                      district
-                    }
-                  >
-                    {
-                      district
-                    }
-                  </option>
-                )
-              )}
-
+              {biharDistricts.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
             </select>
           ) : (
             <input
               name="district"
-              value={
-                address.district
-              }
-              onChange={
-                handleChange
-              }
+              value={address.district}
+              onChange={handleChange}
               type="text"
               placeholder="District"
             />
           )}
-
         </div>
 
         {/* =================================================
@@ -1907,46 +1357,23 @@ ${
         ================================================= */}
 
         <div className="row">
+          <select name="state" value={address.state} onChange={handleChange}>
+            <option value="">-- Select State --</option>
 
-          <select
-            name="state"
-            value={
-              address.state
-            }
-            onChange={
-              handleChange
-            }
-          >
-
-            <option value="">
-              -- Select State --
-            </option>
-
-            {indianStates.map(
-              (state) => (
-                <option
-                  key={state}
-                  value={state}
-                >
-                  {state}
-                </option>
-              )
-            )}
-
+            {indianStates.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
           </select>
 
           <input
             name="landmark"
-            value={
-              address.landmark
-            }
-            onChange={
-              handleChange
-            }
+            value={address.landmark}
+            onChange={handleChange}
             type="text"
             placeholder="Landmark (Optional)"
           />
-
         </div>
 
         {/* =================================================
@@ -1954,71 +1381,41 @@ ${
         ================================================= */}
 
         <div className="row">
-
           <input
             name="alternatePhone"
-            value={
-              address.alternatePhone
-            }
-            onChange={
-              handleChange
-            }
+            value={address.alternatePhone}
+            onChange={handleChange}
             type="text"
             maxLength="10"
             inputMode="numeric"
             placeholder="Alternate Phone (Optional)"
           />
-
         </div>
 
         {/* =================================================
             ADDRESS TYPE
         ================================================= */}
 
-        <p className="type-title">
-          Address Type
-        </p>
+        <p className="type-title">Address Type</p>
 
         <div className="address-type">
-
           <label>
-
             <input
               type="radio"
-              checked={
-                addressType ===
-                "Home"
-              }
-              onChange={() =>
-                setAddressType(
-                  "Home"
-                )
-              }
+              checked={addressType === "Home"}
+              onChange={() => setAddressType("Home")}
             />
-
             Home
-
           </label>
 
           <label>
-
             <input
               type="radio"
-              checked={
-                addressType ===
-                "Work"
-              }
-              onChange={() =>
-                setAddressType(
-                  "Work"
-                )
-              }
+              checked={addressType === "Work"}
+              onChange={() => setAddressType("Work")}
             />
-
             Work
-
           </label>
-
         </div>
 
         {/* =================================================
@@ -2026,37 +1423,24 @@ ${
         ================================================= */}
 
         <div className="buttons">
-
           <button
             className="save-btn"
             type="button"
-            onClick={
-              saveAddress
-            }
-            disabled={
-              savingAddress
-            }
+            onClick={saveAddress}
+            disabled={savingAddress}
           >
-            {savingAddress
-              ? "SAVING..."
-              : "SAVE"}
+            {savingAddress ? "SAVING..." : "SAVE"}
           </button>
 
           <button
             className="cancel-btn"
             type="button"
-            onClick={() =>
-              navigate(-1)
-            }
-            disabled={
-              savingAddress
-            }
+            onClick={() => navigate(-1)}
+            disabled={savingAddress}
           >
             CANCEL
           </button>
-
         </div>
-
       </div>
 
       {/* =================================================
@@ -2065,91 +1449,54 @@ ${
 
       {showMap && (
         <div className="map-overlay">
-
           <div className="map-modal">
-
             {/* HEADER */}
 
             <div className="map-header">
-
               <div>
+                <h3>Select your location</h3>
 
-                <h3>
-                  Select your location
-                </h3>
-
-                <p>
-                  Search, click or drag the marker
-                </p>
-
+                <p>Search, click or drag the marker</p>
               </div>
 
               <button
                 type="button"
                 className="map-close"
-                onClick={() =>
-                  setShowMap(
-                    false
-                  )
-                }
+                onClick={() => setShowMap(false)}
               >
                 <FiX />
               </button>
-
             </div>
 
             {/* MAP */}
 
             <div className="map-container">
-
               {mapPosition ? (
                 <MapContainer
-                  center={
-                    mapPosition
-                  }
+                  center={mapPosition}
                   zoom={17}
-                  scrollWheelZoom={
-                    true
-                  }
+                  scrollWheelZoom={true}
                   className="location-map"
                 >
-
                   <TileLayer
                     attribution="&copy; OpenStreetMap contributors"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
 
-                  <MapController
-                    position={
-                      mapPosition
-                    }
-                  />
+                  <MapController position={mapPosition} />
 
-                  <MapClickHandler
-                    onLocationChange={
-                      handleMapPositionChange
-                    }
-                  />
+                  <MapClickHandler onLocationChange={handleMapPositionChange} />
 
                   <LocationMarker
-                    position={
-                      mapPosition
-                    }
-                    onLocationChange={
-                      handleMapPositionChange
-                    }
+                    position={mapPosition}
+                    onLocationChange={handleMapPositionChange}
                   />
-
                 </MapContainer>
               ) : (
                 <div className="map-loading">
-
                   <FiMapPin />
 
-                  <p>
-                    Loading map...
-                  </p>
-
+                  <p>Loading map...</p>
                 </div>
               )}
 
@@ -2158,38 +1505,21 @@ ${
               <button
                 type="button"
                 className="map-current-location"
-                onClick={
-                  getCurrentLocation
-                }
-                disabled={
-                  locationLoading
-                }
+                onClick={getCurrentLocation}
+                disabled={locationLoading}
               >
-
                 <FiNavigation />
 
-                {locationLoading
-                  ? "Detecting..."
-                  : "Use my current location"}
-
+                {locationLoading ? "Detecting..." : "Use my current location"}
               </button>
 
               {/* GPS ACCURACY */}
 
               {gpsAccuracy && (
                 <div className="gps-accuracy">
-
-                  GPS accuracy:{" "}
-
-                  {Math.round(
-                    gpsAccuracy
-                  )}
-
-                  m
-
+                  GPS accuracy: {Math.round(gpsAccuracy)}m
                 </div>
               )}
-
             </div>
 
             {/* =================================================
@@ -2198,89 +1528,46 @@ ${
 
             {mapAddress && (
               <div className="map-selected-address">
-
                 <FiMapPin />
 
                 <div>
-
                   <strong>
-                    {mapAddress.area ||
-                      mapAddress.city ||
-                      "Selected Location"}
+                    {mapAddress.area || mapAddress.city || "Selected Location"}
                   </strong>
 
-                  <p>
-                    {
-                      mapAddress.displayName
-                    }
-                  </p>
+                  <p>{mapAddress.displayName}</p>
 
                   <div className="location-details">
-
                     {mapAddress.pincode && (
-                      <span>
-                        Pincode:{" "}
-                        {
-                          mapAddress.pincode
-                        }
-                      </span>
+                      <span>Pincode: {mapAddress.pincode}</span>
                     )}
 
                     {mapAddress.district && (
-                      <span>
-                        District:{" "}
-                        {
-                          mapAddress.district
-                        }
-                      </span>
+                      <span>District: {mapAddress.district}</span>
                     )}
 
-                    {mapAddress.state && (
-                      <span>
-                        State:{" "}
-                        {
-                          mapAddress.state
-                        }
-                      </span>
-                    )}
-
+                    {mapAddress.state && <span>State: {mapAddress.state}</span>}
                   </div>
-
                 </div>
-
               </div>
             )}
 
             {/* FOOTER */}
 
             <div className="map-footer">
-
               <button
                 type="button"
                 className="map-save-btn"
-                disabled={
-                  !mapPosition ||
-                  !mapAddress ||
-                  locationLoading
-                }
-                onClick={
-                  saveMapLocation
-                }
+                disabled={!mapPosition || !mapAddress || locationLoading}
+                onClick={saveMapLocation}
               >
-
                 <FiCheck />
-
                 Save this location
-
               </button>
-
             </div>
-
           </div>
-
         </div>
       )}
-
     </div>
   );
 };
