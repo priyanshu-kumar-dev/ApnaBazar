@@ -4,13 +4,12 @@ import { useNavigate } from "react-router-dom";
 import "./Signup.css";
 
 function Signup() {
-
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const [message, setMessage] = useState("");
@@ -18,19 +17,17 @@ function Signup() {
   const handleChange = (e) => {
     setUser({
       ...user,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
-
 
   const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
-
       const response = await axios.post(
-        "http://localhost:5000/signup",
-        user
+        "https://apnabazar-6zxf.onrender.com/signup",
+        user,
       );
 
       setMessage(response.data.message);
@@ -38,26 +35,17 @@ function Signup() {
       setTimeout(() => {
         navigate("/login");
       }, 1500);
-
     } catch (error) {
-
-      setMessage(
-        error.response?.data?.message || "Signup Failed"
-      );
-
+      setMessage(error.response?.data?.message || "Signup Failed");
     }
   };
 
-
   return (
     <div className="signup-container">
-
       <div className="signup-box">
-
         <h2>Create Account</h2>
 
         <form onSubmit={handleSignup}>
-
           <input
             type="text"
             name="name"
@@ -66,7 +54,6 @@ function Signup() {
             onChange={handleChange}
             required
           />
-
 
           <input
             type="email"
@@ -77,7 +64,6 @@ function Signup() {
             required
           />
 
-
           <input
             type="password"
             name="password"
@@ -87,33 +73,16 @@ function Signup() {
             required
           />
 
-
-          <button type="submit">
-            Signup
-          </button>
-
-
+          <button type="submit">Signup</button>
         </form>
 
-
-        {
-          message && 
-          <p className="message">
-            {message}
-          </p>
-        }
-
+        {message && <p className="message">{message}</p>}
 
         <p className="login-link">
           Already have account?
-          <span onClick={() => navigate("/login")}>
-             Login
-          </span>
+          <span onClick={() => navigate("/login")}>Login</span>
         </p>
-
-
       </div>
-
     </div>
   );
 }

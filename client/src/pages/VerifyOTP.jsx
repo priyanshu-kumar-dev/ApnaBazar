@@ -24,7 +24,7 @@ const VerifyOTP = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
+        "https://apnabazar-6zxf.onrender.com/api/auth/verify-otp",
 
         {
           mobile,

@@ -20,7 +20,7 @@ const Login = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:5000/api/auth/send-otp",
+        "https://apnabazar-6zxf.onrender.com/api/auth/send-otp",
         {
           mobile,
         },
