@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -7,10 +6,16 @@ const cookieParser = require("cookie-parser");
 
 const connectDB = require("./config/db");
 
+const authRoutes = require("./routes/auth");
+const bookingRoutes = require("./routes/bookingRoutes");
+const addressRoutes = require("./routes/addressRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+
 const app = express();
 
 // =====================================================
-// DATABASE  https://apnabazar-6zxf.onrender.com
+// DATABASE
 // =====================================================
 
 connectDB();
@@ -27,8 +32,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests without an origin
-      // (Postman, server-to-server, etc.)
       if (!origin) {
         return callback(null, true);
       }
@@ -67,15 +70,11 @@ app.get("/", (req, res) => {
 // AUTH
 // =====================================================
 
-const authRoutes = require("./routes/auth");
-
 app.use("/api/auth", authRoutes);
 
 // =====================================================
 // BOOKING
 // =====================================================
-
-const bookingRoutes = require("./routes/bookingRoutes");
 
 app.use("/api/bookings", bookingRoutes);
 
@@ -83,17 +82,19 @@ app.use("/api/bookings", bookingRoutes);
 // ADDRESS
 // =====================================================
 
-const addressRoutes = require("./routes/addressRoutes");
-
 app.use("/api/addresses", addressRoutes);
 
 // =====================================================
 // RAZORPAY PAYMENT
 // =====================================================
 
-const paymentRoutes = require("./routes/paymentRoutes");
-
 app.use("/api/payments", paymentRoutes);
+
+// =====================================================
+// ORDERS
+// =====================================================
+
+app.use("/api/orders", orderRoutes);
 
 // =====================================================
 // 404
@@ -128,17 +129,11 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log("========================================");
-
   console.log(`Server running on port ${PORT}`);
-
   console.log("Auth API     : /api/auth");
-
   console.log("Booking API  : /api/bookings");
-
   console.log("Address API  : /api/addresses");
-
   console.log("Payment API  : /api/payments");
-
+  console.log("Orders API   : /api/orders");
   console.log("========================================");
 });
-

@@ -17,6 +17,7 @@ import BookingSuccess from "../pages/BookingSuccess";
 import SimilarProduct from "../pages/SimilarProduct";
 import ProductDetails from "../pages/ProductDetails";
 import Cart from "../pages/Cart";
+import Orders from "../pages/Orders";
 
 function AppRoutes() {
   return (
@@ -58,6 +59,8 @@ function AppRoutes() {
       <Route path="/payment" element={<Payment />} />
 
       <Route path="/booking-success" element={<BookingSuccess />} />
+
+      <Route path="/orders" element={<Orders />} />
     </Routes>
   );
 }
