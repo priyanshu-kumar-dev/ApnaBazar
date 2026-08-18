@@ -945,6 +945,12 @@
   font-weight: 700;
 }
 
+.buy-btns span {
+  margin-top: 24px;
+  font-size: 24px;
+}
+
+
 .buy-btns:hover {
   background: #ffca28;
 }

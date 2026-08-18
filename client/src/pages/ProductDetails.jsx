@@ -907,14 +907,14 @@ function ProductDetails() {
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
-  if (!added) return;
+    if (!added) return;
 
-  const timer = setTimeout(() => {
-    setAdded(false);
-  }, 3000);
+    const timer = setTimeout(() => {
+      setAdded(false);
+    }, 3000);
 
-  return () => clearTimeout(timer);
-}, [added]);
+    return () => clearTimeout(timer);
+  }, [added]);
 
   /* =========================================================
      REVIEWS
@@ -2436,6 +2436,7 @@ function ProductDetails() {
 
             <button type="button" className="buy-btns" onClick={handleBuyNow}>
               Buy now
+              <span> ₹{Number(currentPrice || 0).toLocaleString("en-IN")}</span>
             </button>
           </div>
 

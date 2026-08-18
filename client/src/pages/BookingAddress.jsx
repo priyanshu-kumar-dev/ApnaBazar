@@ -129,6 +129,103 @@ const biharDistricts = [
 ];
 
 // =====================================================
+// MOBILE NUMBER VALIDATION
+// =====================================================
+
+const isValidIndianMobile = (mobile) => {
+  const number = String(mobile || "").trim();
+
+  // Exactly 10 digits and starts with 6, 7, 8 or 9
+  if (!/^[6-9]\d{9}$/.test(number)) {
+    return false;
+  }
+
+  // Reject same digit repeated
+  if (/^(\d)\1{9}$/.test(number)) {
+    return false;
+  }
+
+  // Reject common fake/test numbers
+  const fakeNumbers = [
+    "1234567890",
+    "0123456789",
+    "9876543210",
+    "0987654321",
+    "1111111111",
+    "2222222222",
+    "3333333333",
+    "4444444444",
+    "5555555555",
+    "6666666666",
+    "7777777777",
+    "8888888888",
+    "9999999999",
+  ];
+
+  if (fakeNumbers.includes(number)) {
+    return false;
+  }
+
+  return true;
+};
+
+// =====================================================
+// INDIA POST PINCODE VERIFICATION
+// =====================================================
+
+const verifyPincode = async (pincode) => {
+  const pin = String(pincode || "").trim();
+
+  if (!/^\d{6}$/.test(pin)) {
+    return {
+      valid: false,
+      message: "Pincode exactly 6 digits ka hona chahiye.",
+    };
+  }
+
+  try {
+    const response = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+
+    if (!response.ok) {
+      return {
+        valid: false,
+        message: "Pincode verify nahi ho saka.",
+      };
+    }
+
+    const data = await response.json();
+
+    const result = data?.[0];
+
+    if (
+      !result ||
+      result.Status !== "Success" ||
+      !Array.isArray(result.PostOffice) ||
+      result.PostOffice.length === 0
+    ) {
+      return {
+        valid: false,
+        message: `Pincode ${pin} India Post records me nahi mila.`,
+      };
+    }
+
+    return {
+      valid: true,
+      pincode: pin,
+      postOffice: result.PostOffice[0],
+      postOffices: result.PostOffice,
+    };
+  } catch (error) {
+    console.error("Pincode verification error:", error);
+
+    return {
+      valid: false,
+      message: "Pincode verification service unavailable.",
+    };
+  }
+};
+
+// =====================================================
 // MAP CONTROLLER
 // =====================================================
 
@@ -294,12 +391,10 @@ const BookingAddress = () => {
         if (parsed.location) {
           setSelectedLocation({
             latitude: parsed.location.latitude,
-
             longitude: parsed.location.longitude,
-
             accuracy: parsed.location.accuracy || null,
-
             displayName: parsed.location.displayName || "",
+            address: parsed.location.address || {},
           });
 
           setMapPosition([parsed.location.latitude, parsed.location.longitude]);
@@ -370,6 +465,44 @@ const BookingAddress = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // ===============================================
+    // MOBILE NUMBERS
+    // ===============================================
+
+    if (name === "mobile" || name === "alternatePhone") {
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+
+      setAddress((prev) => ({
+        ...prev,
+        [name]: digitsOnly,
+      }));
+
+      setLocationSaved(false);
+
+      return;
+    }
+
+    // ===============================================
+    // PINCODE
+    // ===============================================
+
+    if (name === "pincode") {
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 6);
+
+      setAddress((prev) => ({
+        ...prev,
+        pincode: digitsOnly,
+      }));
+
+      setLocationSaved(false);
+
+      return;
+    }
+
+    // ===============================================
+    // NORMAL INPUT
+    // ===============================================
+
     setAddress((prev) => ({
       ...prev,
       [name]: value,
@@ -403,7 +536,6 @@ const BookingAddress = () => {
 
       return {
         ...converted,
-
         displayName: data.display_name || "",
       };
     } catch (error) {
@@ -498,6 +630,7 @@ const BookingAddress = () => {
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Your browser does not support location.");
+
       return;
     }
 
@@ -674,6 +807,7 @@ const BookingAddress = () => {
 
     if (!query) {
       alert("Area, village, city ya pincode enter karein.");
+
       return;
     }
 
@@ -815,11 +949,25 @@ Sirauli, Sitamarhi, Bihar`,
   const saveMapLocation = () => {
     if (!mapPosition) {
       alert("Please select a location first.");
+
       return;
     }
 
     if (!mapAddress) {
       alert("Address load hone ka wait karein.");
+
+      return;
+    }
+
+    // ===============================================
+    // REQUIRE REAL ADDRESS DATA
+    // ===============================================
+
+    if (!mapAddress.pincode || !mapAddress.state || !mapAddress.district) {
+      alert(
+        "Selected location ka complete address nahi mila. Please map par valid location select karein.",
+      );
+
       return;
     }
 
@@ -950,44 +1098,70 @@ ${
 
   const saveAddress = async () => {
     // ===============================================
-    // VALIDATION
+    // REQUIRED FIELDS
     // ===============================================
 
     if (
-      !address.name ||
-      !address.mobile ||
-      !address.pincode ||
-      !address.area ||
-      !address.house ||
-      !address.city ||
-      !address.district ||
-      !address.state
+      !address.name?.trim() ||
+      !address.mobile?.trim() ||
+      !address.pincode?.trim() ||
+      !address.area?.trim() ||
+      !address.house?.trim() ||
+      !address.city?.trim() ||
+      !address.district?.trim() ||
+      !address.state?.trim()
     ) {
       alert("Please fill complete address details.");
 
       return;
     }
 
-    if (!/^[0-9]{10}$/.test(address.mobile)) {
-      alert("Please enter valid 10-digit mobile number.");
+    // ===============================================
+    // MOBILE VALIDATION
+    // ===============================================
 
-      return;
-    }
-
-    if (!/^[0-9]{6}$/.test(address.pincode)) {
-      alert("Please enter valid 6-digit pincode.");
-
-      return;
-    }
-
-    if (address.alternatePhone && !/^[0-9]{10}$/.test(address.alternatePhone)) {
-      alert("Please enter valid alternate phone number.");
+    if (!isValidIndianMobile(address.mobile)) {
+      alert(
+        "Please enter a valid Indian mobile number.\n\n" +
+          "Number 6, 7, 8 ya 9 se start hona chahiye.\n" +
+          "1234567890, 1111111111, 9999999999 jaise fake numbers allowed nahi hain.",
+      );
 
       return;
     }
 
     // ===============================================
-    // GET LOGGED IN USER
+    // ALTERNATE MOBILE
+    // ===============================================
+
+    if (address.alternatePhone) {
+      if (!isValidIndianMobile(address.alternatePhone)) {
+        alert("Please enter a valid alternate Indian mobile number.");
+
+        return;
+      }
+
+      if (address.alternatePhone === address.mobile) {
+        alert(
+          "Alternate phone number primary mobile number se different hona chahiye.",
+        );
+
+        return;
+      }
+    }
+
+    // ===============================================
+    // PINCODE FORMAT
+    // ===============================================
+
+    if (!/^\d{6}$/.test(address.pincode)) {
+      alert("Please enter a valid 6-digit pincode.");
+
+      return;
+    }
+
+    // ===============================================
+    // USER LOGIN
     // ===============================================
 
     const userId = getUserId();
@@ -999,66 +1173,155 @@ ${
     }
 
     // ===============================================
-    // FINAL LOCATION
+    // LOCATION MUST EXIST
     // ===============================================
 
-    const finalLocation = selectedLocation
-      ? {
-          latitude: Number(selectedLocation.latitude),
+    if (!selectedLocation) {
+      alert(
+        "Please select your real delivery location using the map or current location.",
+      );
 
-          longitude: Number(selectedLocation.longitude),
-
-          accuracy: selectedLocation.accuracy || gpsAccuracy || null,
-
-          displayName: selectedLocation.displayName || "",
-        }
-      : null;
+      return;
+    }
 
     // ===============================================
-    // FINAL ADDRESS
+    // COORDINATES
     // ===============================================
 
-    const finalAddress = {
-      userId,
+    const latitude = Number(selectedLocation.latitude);
 
-      name: address.name.trim(),
+    const longitude = Number(selectedLocation.longitude);
 
-      mobile: address.mobile.trim(),
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      alert("Selected location is invalid. Please select location again.");
 
-      pincode: address.pincode.trim(),
-
-      area: address.area.trim(),
-
-      house: address.house.trim(),
-
-      city: address.city.trim(),
-
-      district: address.district.trim(),
-
-      state: address.state.trim(),
-
-      landmark: address.landmark ? address.landmark.trim() : "",
-
-      alternatePhone: address.alternatePhone
-        ? address.alternatePhone.trim()
-        : "",
-
-      addressType,
-
-      location: finalLocation,
-    };
+      return;
+    }
 
     // ===============================================
-    // DEBUG
+    // START SAVING
     // ===============================================
-
-    console.log("FINAL ADDRESS:", finalAddress);
 
     setSavingAddress(true);
 
     try {
       // =============================================
-      // MONGODB API
+      // VERIFY REAL PINCODE
+      // =============================================
+
+      const pincodeResult = await verifyPincode(address.pincode);
+
+      if (!pincodeResult.valid) {
+        alert(
+          pincodeResult.message ||
+            "Ye pincode India Post records me valid nahi hai.",
+        );
+
+        setSavingAddress(false);
+
+        return;
+      }
+
+      console.log("VALID PINCODE:", pincodeResult.pincode);
+
+      console.log("POST OFFICES:", pincodeResult.postOffices);
+
+      // =============================================
+      // LOCATION PINCODE
+      // =============================================
+
+      const locationPincode =
+        selectedLocation?.address?.pincode || mapAddress?.pincode || "";
+
+      // =============================================
+      // PINCODE MISMATCH
+      // =============================================
+
+      if (
+        locationPincode &&
+        /^\d{6}$/.test(locationPincode) &&
+        locationPincode !== address.pincode
+      ) {
+        const confirmPincode = window.confirm(
+          `Selected map location ka pincode ${locationPincode} hai,\n` +
+            `lekin aapne ${address.pincode} enter kiya hai.\n\n` +
+            `Kya aap phir bhi continue karna chahte hain?`,
+        );
+
+        if (!confirmPincode) {
+          setSavingAddress(false);
+
+          return;
+        }
+      }
+
+      // =============================================
+      // FINAL LOCATION
+      // =============================================
+
+      const finalLocation = {
+        latitude,
+        longitude,
+
+        accuracy: selectedLocation.accuracy || gpsAccuracy || null,
+
+        displayName: selectedLocation.displayName || "",
+      };
+
+      // =============================================
+      // FINAL ADDRESS
+      // =============================================
+
+      const finalAddress = {
+        userId,
+
+        name: address.name.trim(),
+
+        mobile: address.mobile.trim(),
+
+        pincode: address.pincode.trim(),
+
+        area: address.area.trim(),
+
+        house: address.house.trim(),
+
+        city: address.city.trim(),
+
+        district: address.district.trim(),
+
+        state: address.state.trim(),
+
+        landmark: address.landmark ? address.landmark.trim() : "",
+
+        alternatePhone: address.alternatePhone
+          ? address.alternatePhone.trim()
+          : "",
+
+        addressType,
+
+        location: finalLocation,
+
+        // =========================================
+        // PINCODE VERIFICATION DATA
+        // =========================================
+
+        pincodeVerified: true,
+
+        pincodePostOffice: pincodeResult.postOffice?.Name || "",
+
+        pincodeDistrict: pincodeResult.postOffice?.District || "",
+
+        pincodeState: pincodeResult.postOffice?.State || "",
+      };
+
+      // =============================================
+      // DEBUG
+      // =============================================
+
+      console.log("FINAL VERIFIED ADDRESS:", finalAddress);
+
+      // =============================================
+      // SAVE TO MONGODB
       // =============================================
 
       const response = await axios.post(
@@ -1075,43 +1338,45 @@ ${
       localStorage.setItem("bookingAddress", JSON.stringify(finalAddress));
 
       // =============================================
-      // ALSO SAVE LOCATION
+      // SAVE LOCATION
       // =============================================
 
-      if (finalLocation) {
-        localStorage.setItem(
-          "savedLocation",
-          JSON.stringify({
-            latitude: finalLocation.latitude,
+      localStorage.setItem(
+        "savedLocation",
+        JSON.stringify({
+          latitude: finalLocation.latitude,
 
-            longitude: finalLocation.longitude,
+          longitude: finalLocation.longitude,
 
-            accuracy: finalLocation.accuracy,
+          accuracy: finalLocation.accuracy,
 
-            displayName: finalLocation.displayName,
+          displayName: finalLocation.displayName,
 
-            address: {
-              pincode: finalAddress.pincode,
+          address: {
+            pincode: finalAddress.pincode,
 
-              area: finalAddress.area,
+            area: finalAddress.area,
 
-              house: finalAddress.house,
+            house: finalAddress.house,
 
-              city: finalAddress.city,
+            city: finalAddress.city,
 
-              district: finalAddress.district,
+            district: finalAddress.district,
 
-              state: finalAddress.state,
-            },
-          }),
-        );
-      }
+            state: finalAddress.state,
+          },
+
+          savedAt: new Date().toISOString(),
+        }),
+      );
 
       // =============================================
       // SUCCESS
       // =============================================
 
-      alert(response.data?.message || "Address saved successfully!");
+      alert(
+        response.data?.message || "Address verified and saved successfully!",
+      );
 
       // =============================================
       // ORDER SUMMARY
@@ -1133,7 +1398,7 @@ ${
       if (error.response?.data?.message) {
         alert(error.response.data.message);
       } else {
-        alert("Address MongoDB me save nahi ho paya. Backend check karein.");
+        alert("Address save nahi ho paya. Please try again.");
       }
     } finally {
       setSavingAddress(false);
@@ -1271,9 +1536,10 @@ ${
             name="mobile"
             value={address.mobile}
             onChange={handleChange}
-            type="text"
-            maxLength="10"
+            type="tel"
+            maxLength={10}
             inputMode="numeric"
+            pattern="[6-9][0-9]{9}"
             placeholder="10-digit mobile number"
           />
         </div>
@@ -1288,7 +1554,7 @@ ${
             value={address.pincode}
             onChange={handleChange}
             type="text"
-            maxLength="6"
+            maxLength={6}
             inputMode="numeric"
             placeholder="Pincode"
           />
@@ -1385,9 +1651,10 @@ ${
             name="alternatePhone"
             value={address.alternatePhone}
             onChange={handleChange}
-            type="text"
-            maxLength="10"
+            type="tel"
+            maxLength={10}
             inputMode="numeric"
+            pattern="[6-9][0-9]{9}"
             placeholder="Alternate Phone (Optional)"
           />
         </div>
@@ -1429,7 +1696,7 @@ ${
             onClick={saveAddress}
             disabled={savingAddress}
           >
-            {savingAddress ? "SAVING..." : "SAVE"}
+            {savingAddress ? "VERIFYING & SAVING..." : "SAVE"}
           </button>
 
           <button
