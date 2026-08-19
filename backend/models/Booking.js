@@ -88,9 +88,7 @@ const BookingSchema = new mongoose.Schema({
     addressType:{
       type:String
     }
-
   }
-
 },
 {
   timestamps:true
