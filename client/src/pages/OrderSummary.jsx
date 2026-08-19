@@ -586,7 +586,7 @@ function OrderSummary() {
                 <h3>{product.title}</h3>
 
                 {variantText && (
-                  <p className="product-variant">{variantText}</p>
+                  <p className="product-variant">Size: {variantText}</p>
                 )}
 
                 {colorText && (

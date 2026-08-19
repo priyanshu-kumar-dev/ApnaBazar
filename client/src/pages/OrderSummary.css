@@ -202,6 +202,7 @@
   justify-content: center;
   background: #fff;
   overflow: hidden;
+  margin-bottom: 15px;
 }
 
 .product-image-box img {
@@ -407,7 +408,8 @@
 
 .product-variant,
 .product-color {
-  margin: 5px 0;
+  display: inline-block;
+  margin: 5px 15px 5px 0;
   color: #777;
   font-size: 14px;
 }
@@ -486,9 +488,10 @@
 }
 
 .delivery-date {
-  margin-top: 28px;
+  margin-top: 35px;
   color: #333;
   font-size: 15px;
+  
 }
 
 .delivery-date b {

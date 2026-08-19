@@ -293,43 +293,18 @@ textarea:focus {
 .payment-summary h3 {
   padding: 18px 20px;
   border-bottom: 1px solid #f0f0f0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.payment-summary p {
+  padding: 4px 20px;
   color: #878787;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
-.summary-row,
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 20px;
-  font-size: 15px;
-  color: #212121;
-}
-
-.summary-total {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.payment-summary hr {
-  border: none;
-  border-top: 1px dashed #ddd;
-  margin: 0 20px;
-}
-
-.green {
-  color: #388e3c;
-  font-weight: 600;
-}
-
-.save-msg {
-  color: #388e3c;
-  font-size: 14px;
-  padding: 15px 20px;
-  font-weight: 600;
-} /* ==========================
+/* ==========================
    ADDRESS BOX
 ========================== */
 
@@ -352,7 +327,7 @@ textarea:focus {
   font-size: 14px;
   color: #555;
   line-height: 1.7;
-  margin-bottom: 4px;
+  margin-right: 36px;
 }
 
 .address-box b {

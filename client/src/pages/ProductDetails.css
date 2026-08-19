@@ -89,7 +89,7 @@
 .icon-btn {
   width: 42px;
   height: 42px;
-  margin-right: 50px;
+  margin-right: 10px;
 
   display: flex;
   align-items: center;
@@ -719,16 +719,13 @@
 
 .address-icon {
   flex-shrink: 0;
-
-  margin-right: 10px;
-
-  font-size: 20px;
-}
+  margin-left: -12px;
+  font-size: 24px; 
+} 
 
 .address-text {
   min-width: 0;
   flex: 1;
-
   display: flex;
   align-items: center;
 
@@ -789,7 +786,7 @@
 
 .seller-info {
   display: flex;
-
+  margin-top: 4px;
   gap: 10px;
 
   padding: 11px 12px;
@@ -929,6 +926,11 @@
 }
 
 .buy-btns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: px;
   flex: 1;
 
   min-height: 65px;
@@ -946,8 +948,9 @@
 }
 
 .buy-btns span {
-  margin-top: 24px;
-  font-size: 24px;
+  font-weight: 500;
+  margin-top: 4px;
+  font-size: 14px;
 }
 
 

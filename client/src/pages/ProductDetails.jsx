@@ -955,19 +955,70 @@ function ProductDetails() {
   /* =========================================================
      ADDRESS
   ========================================================= */
+  const [address] = useState(() => {
+    try {
+      return (
+        JSON.parse(localStorage.getItem("deliveryAddress")) || {
+          name: "Priyanshu Kumar",
+          pincode: "302022",
+          type: "HOME",
+          address:
+            "Jagannath University YIT, Jaipur Sitapura Jagannath University YIT campus gate no 2, Jaipur",
+        }
+      );
+    } catch {
+      return {
+        name: "Priyanshu Kumar",
+        pincode: "302022",
+        type: "HOME",
+        address:
+          "Jagannath University YIT, Jaipur Sitapura Jagannath University YIT campus gate no 2, Jaipur",
+      };
+    }
+  });
 
-  const [deliveryAddress, setDeliveryAddress] = useState(null);
+  /* =========================================================
+     TIME
+  ========================================================= */
+
+  const TIMER_DURATION = 1 * 60 * 60 + 20 * 60 + 20;
+
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const savedEndTime = localStorage.getItem("orderTimerEnd");
+
+    if (savedEndTime) {
+      const remaining = Math.ceil((Number(savedEndTime) - Date.now()) / 1000);
+
+      if (remaining > 0) {
+        return remaining;
+      }
+    }
+
+    const newEndTime = Date.now() + TIMER_DURATION * 1000;
+    localStorage.setItem("orderTimerEnd", newEndTime);
+
+    return TIMER_DURATION;
+  });
 
   useEffect(() => {
-    try {
-      const savedAddress = localStorage.getItem("deliveryAddress");
+    const timer = setInterval(() => {
+      setTimeLeft(() => {
+        const endTime = Number(localStorage.getItem("orderTimerEnd"));
+        const remaining = Math.ceil((endTime - Date.now()) / 1000);
 
-      if (savedAddress) {
-        setDeliveryAddress(JSON.parse(savedAddress));
-      }
-    } catch (error) {
-      console.error("Address error:", error);
-    }
+        if (remaining > 0) {
+          return remaining;
+        }
+
+        // 0 par pahunchne ke baad naya cycle start
+        const newEndTime = Date.now() + TIMER_DURATION * 1000;
+        localStorage.setItem("orderTimerEnd", newEndTime);
+
+        return TIMER_DURATION;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   /* =========================================================
@@ -1863,44 +1914,42 @@ function ProductDetails() {
 
             <div className="delivery-address">
               <span className="address-icon">⌂</span>
-
               <div className="address-text">
                 <strong>HOME</strong>
-
-                {deliveryAddress ? (
-                  <span>
-                    {deliveryAddress.name}, {deliveryAddress.address},{" "}
-                    {deliveryAddress.city}, {deliveryAddress.state} -{" "}
-                    {deliveryAddress.pincode}
-                  </span>
-                ) : (
-                  <span>Select delivery address</span>
-                )}
+                <span>{address.address}</span>
               </div>
-
               <span className="address-arrow">›</span>
             </div>
 
             <div className="delivery-info">
               <span className="delivery-icon">▣</span>
-
               <div>
-                <strong>Delivery by 18 Aug, Tue</strong>
-
-                <p>Order in 01h 20m 20s</p>
+                <strong>
+                  Delivery by{" "}
+                  {new Date(
+                    Date.now() + 7 * 24 * 60 * 60 * 1000,
+                  ).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    weekday: "short",
+                  })}
+                </strong>
+                <p>
+                  Order in{" "}
+                  {String(Math.floor(timeLeft / 3600)).padStart(2, "0")}h{" "}
+                  {String(Math.floor((timeLeft % 3600) / 60)).padStart(2, "0")}m{" "}
+                  {String(timeLeft % 60).padStart(2, "0")}s
+                </p>
               </div>
             </div>
 
             <div className="seller-info">
               <span className="seller-icon">▣</span>
-
               <div>
                 <div>
                   Fulfilled by <strong>INDIABUZZZ</strong>
                 </div>
-
                 <p>4.8 ★ • 7 years with Flipkart</p>
-
                 <a href="#">See other sellers</a>
               </div>
             </div>
@@ -2436,7 +2485,7 @@ function ProductDetails() {
 
             <button type="button" className="buy-btns" onClick={handleBuyNow}>
               Buy now
-              <span> ₹{Number(currentPrice || 0).toLocaleString("en-IN")}</span>
+              <span>From ₹{Number(currentPrice || 0).toLocaleString("en-IN")}</span>
             </button>
           </div>
 
